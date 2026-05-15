@@ -3,7 +3,7 @@ import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 
 const phrases = [
   'Я улыбаюсь каждый раз, когда вижу твои сообщения. И почему-то всегда чувствую, когда ты пишешь, даже если занят.',
-  'Мне очень нравится, как ты реагируешь на мои слова — на комплименты, на мои обращения… да, солнце?) И мне правда хочется радовать тебя ещё больше.',
+  'Мне очень нравится, как ты реагируешь на мои слова - на комплименты, на мои обращения… да, солнце?) И мне правда хочется радовать тебя ещё больше.',
   'Ты стала для меня человеком, который заряжает меня даже в обычные дни. С тобой всё как-то легче и теплее.',
 ];
 
@@ -11,7 +11,7 @@ const finalLines = [
   'Я долго думал, когда и как это сказать.',
   'Но понял, что больше не хочу прятать это за намёками.',
   'Ты стала для меня очень важным человеком.',
-  'И если честно — я боюсь тебя потерять.',
+  'И если честно - я боюсь тебя потерять.',
   'И мне хочется быть рядом с тобой уже не как “просто кто-то”.',
 ];
 
@@ -156,11 +156,12 @@ function FinalCard() {
 
     setTimeout(() => {
       setShowExtra(true);
-    }, 800);
+    }, 420);
   };
 
   return (
-    <motion.section
+    <>
+      <motion.section
       initial={{ opacity: 0, y: 56, scale: 0.96, filter: 'blur(18px)' }}
       animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
       exit={{ opacity: 0, y: 24, filter: 'blur(14px)' }}
@@ -201,9 +202,18 @@ function FinalCard() {
           <motion.div
             key="answer-buttons"
             initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -16, scale: 0.98, filter: 'blur(10px)' }}
-            transition={{ duration: 1, delay: 2.45, ease: [0.22, 1, 0.36, 1] }}
+            animate={{
+              opacity: 1,
+              y: 0,
+              transition: { duration: 1, delay: 2.45, ease: [0.22, 1, 0.36, 1] },
+            }}
+            exit={{
+              opacity: 0,
+              y: -10,
+              scale: 0.96,
+              filter: 'blur(12px)',
+              transition: { duration: 0.26, ease: [0.22, 1, 0.36, 1] },
+            }}
             className="relative mt-9 flex flex-col gap-3 sm:mt-12 sm:flex-row sm:justify-center sm:gap-4"
           >
             <button
@@ -223,23 +233,43 @@ function FinalCard() {
         )}
       </AnimatePresence>
 
+      </motion.section>
+
       <AnimatePresence>
         {showExtra && (
           <motion.div
-            initial={{ opacity: 0, y: 18, scale: 0.96, filter: 'blur(12px)' }}
-            animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
+            className="fixed inset-0 z-50 flex items-center justify-center px-5 py-[max(2rem,env(safe-area-inset-top))] pb-[max(2rem,env(safe-area-inset-bottom))]"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
-            className="relative mx-auto mt-9 max-w-md rounded-3xl border border-white/10 bg-white/[0.08] px-6 py-6 text-center shadow-glow backdrop-blur-xl sm:mt-12 sm:px-10 sm:py-8"
+            transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Ответ принят"
           >
-            <p className="font-display text-3xl font-light leading-tight tracking-[-0.04em] text-white sm:text-5xl">
-              Я рад, что ты здесь <span aria-hidden="true">❤️</span>
-            </p>
-            <span className="sr-only">{answer}</span>
+            <motion.div
+              className="absolute inset-0 bg-black/72 backdrop-blur-md"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.32 }}
+            />
+            <motion.div
+              initial={{ opacity: 0, y: 18, scale: 0.92, filter: 'blur(14px)' }}
+              animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
+              exit={{ opacity: 0, y: 8, scale: 0.96, filter: 'blur(10px)' }}
+              transition={{ duration: 0.72, ease: [0.22, 1, 0.36, 1] }}
+              className="relative w-full max-w-md rounded-[2rem] border border-white/15 bg-white/[0.09] px-7 py-8 text-center shadow-[0_0_120px_rgba(255,255,255,0.13)] backdrop-blur-2xl sm:px-10 sm:py-10"
+            >
+              <div className="absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-white/55 to-transparent" />
+              <p className="font-display text-4xl font-light leading-tight tracking-[-0.04em] text-white sm:text-6xl">
+                Я рад, что ты здесь <span aria-hidden="true">❤️</span>
+              </p>
+              <span className="sr-only">{answer}</span>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
-    </motion.section>
+    </>
   );
 }
 
