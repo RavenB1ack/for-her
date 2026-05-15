@@ -2,15 +2,16 @@ import { useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 
 const phrases = [
-  'Мне нравится случайно находить твои сообщения среди дня.',
-  'После разговоров с тобой у меня почему-то всегда становится спокойнее.',
-  'И в какой-то момент ты стала значить для меня намного больше, чем просто человек.',
+  'Я улыбаюсь каждый раз, когда вижу твои сообщения. И почему-то всегда чувствую, когда ты пишешь, даже если занят.',
+  'Мне очень нравится, как ты реагируешь на мои слова — на комплименты, на мои обращения… да, солнце?) И мне правда хочется радовать тебя ещё больше.',
+  'Ты стала для меня человеком, который заряжает меня даже в обычные дни. С тобой всё как-то легче и теплее.',
 ];
 
 const finalLines = [
-  'Я долго думал, как сказать это правильно.',
+  'Я долго думал, когда и как это сказать.',
   'Но понял, что больше не хочу прятать это за намёками.',
-  'Ты стала для меня очень особенным человеком.',
+  'Ты стала для меня очень важным человеком.',
+  'И если честно — я боюсь тебя потерять.',
   'И мне хочется быть рядом с тобой уже не как “просто кто-то”.',
 ];
 
@@ -136,6 +137,27 @@ function PhraseSequence({ stage }) {
 
 function FinalCard() {
   const [answer, setAnswer] = useState('');
+  const [buttonsVisible, setButtonsVisible] = useState(true);
+  const [showExtra, setShowExtra] = useState(false);
+
+  const handleAnswer = (message) => {
+    setAnswer(message);
+    setButtonsVisible(false);
+
+    fetch('/api/notify', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        text: 'Она нажала кнопку ❤️',
+      }),
+    });
+
+    setTimeout(() => {
+      setShowExtra(true);
+    }, 800);
+  };
 
   return (
     <motion.section
@@ -174,38 +196,47 @@ function FinalCard() {
         </h2>
       </motion.div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1, delay: 2.45, ease: [0.22, 1, 0.36, 1] }}
-        className="relative mt-9 flex flex-col gap-3 sm:mt-12 sm:flex-row sm:justify-center sm:gap-4"
-      >
-        <button
-          className="group relative min-h-14 overflow-hidden rounded-2xl bg-white px-10 py-4 text-base font-medium text-black shadow-glow transition duration-300 ease-cinematic hover:-translate-y-0.5 hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-white/70 focus:ring-offset-2 focus:ring-offset-black active:scale-[0.99]"
-          onClick={() => setAnswer('Я знал. И всё равно сердце замерло.')}
-        >
-          <span className="relative z-10">Да</span>
-          <span className="absolute inset-0 translate-y-full bg-gradient-to-t from-rose-100 to-white transition duration-300 ease-cinematic group-hover:translate-y-0" />
-        </button>
-        <button
-          className="min-h-14 rounded-2xl border border-white/15 bg-white/[0.07] px-10 py-4 text-base font-medium text-white/85 backdrop-blur-md transition duration-300 ease-cinematic hover:-translate-y-0.5 hover:scale-[1.02] hover:border-white/25 hover:bg-white/[0.12] focus:outline-none focus:ring-2 focus:ring-white/45 focus:ring-offset-2 focus:ring-offset-black active:scale-[0.99]"
-          onClick={() => setAnswer('Тогда это мой любимый момент.')}
-        >
-          Конечно да
-        </button>
-      </motion.div>
+      <AnimatePresence mode="wait">
+        {buttonsVisible && (
+          <motion.div
+            key="answer-buttons"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -16, scale: 0.98, filter: 'blur(10px)' }}
+            transition={{ duration: 1, delay: 2.45, ease: [0.22, 1, 0.36, 1] }}
+            className="relative mt-9 flex flex-col gap-3 sm:mt-12 sm:flex-row sm:justify-center sm:gap-4"
+          >
+            <button
+              className="group relative min-h-14 overflow-hidden rounded-2xl bg-white px-10 py-4 text-base font-medium text-black shadow-glow transition duration-300 ease-cinematic hover:-translate-y-0.5 hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-white/70 focus:ring-offset-2 focus:ring-offset-black active:scale-[0.99]"
+              onClick={() => handleAnswer('Она выбрала «Да» ❤️')}
+            >
+              <span className="relative z-10">Да</span>
+              <span className="absolute inset-0 translate-y-full bg-gradient-to-t from-rose-100 to-white transition duration-300 ease-cinematic group-hover:translate-y-0" />
+            </button>
+            <button
+              className="min-h-14 rounded-2xl border border-white/15 bg-white/[0.07] px-10 py-4 text-base font-medium text-white/85 backdrop-blur-md transition duration-300 ease-cinematic hover:-translate-y-0.5 hover:scale-[1.02] hover:border-white/25 hover:bg-white/[0.12] focus:outline-none focus:ring-2 focus:ring-white/45 focus:ring-offset-2 focus:ring-offset-black active:scale-[0.99]"
+              onClick={() => handleAnswer('Она выбрала «Конечно да» ❤️')}
+            >
+              Конечно да
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <AnimatePresence>
-        {answer && (
-          <motion.p
-            initial={{ opacity: 0, y: 12, filter: 'blur(8px)' }}
-            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+        {showExtra && (
+          <motion.div
+            initial={{ opacity: 0, y: 18, scale: 0.96, filter: 'blur(12px)' }}
+            animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-            className="relative mt-6 text-sm text-white/55 sm:text-base"
+            transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
+            className="relative mx-auto mt-9 max-w-md rounded-3xl border border-white/10 bg-white/[0.08] px-6 py-6 text-center shadow-glow backdrop-blur-xl sm:mt-12 sm:px-10 sm:py-8"
           >
-            {answer}
-          </motion.p>
+            <p className="font-display text-3xl font-light leading-tight tracking-[-0.04em] text-white sm:text-5xl">
+              Я рад, что ты здесь <span aria-hidden="true">❤️</span>
+            </p>
+            <span className="sr-only">{answer}</span>
+          </motion.div>
         )}
       </AnimatePresence>
     </motion.section>
