@@ -11,9 +11,7 @@ A production-ready, mobile-first cinematic confession website built with **React
 - Responsive mobile-first layout tuned for iPhone Safari and Android Chrome
 - Safe-area-aware fullscreen spacing using `svh` and `env(safe-area-inset-*)`
 - Reduced-motion support for accessibility
-- Animated CTA buttons that disappear after a choice
-- Centered final thank-you reveal after the button click
-- Optional Telegram notification via Vercel serverless function
+- Animated, accessible CTA buttons
 - Fast Vite production build ready for Vercel
 
 ## Tech Stack
@@ -22,7 +20,6 @@ A production-ready, mobile-first cinematic confession website built with **React
 - [React](https://react.dev/)
 - [TailwindCSS](https://tailwindcss.com/)
 - [Framer Motion](https://www.framer.com/motion/)
-- Vercel serverless function for private Telegram notifications
 
 ## Getting Started
 
@@ -50,25 +47,6 @@ Preview the production build locally:
 npm run preview
 ```
 
-## Telegram Notification Setup
-
-The site calls `/api/notify` after either final button is clicked. The Telegram bot token and chat ID must be stored as environment variables, not committed to the frontend bundle.
-
-Create a local `.env` file if you want to test notifications locally with Vercel tooling:
-
-```bash
-TELEGRAM_BOT_TOKEN=your_telegram_bot_token_here
-TELEGRAM_CHAT_ID=your_telegram_chat_id_here
-```
-
-For production on Vercel:
-
-1. Open the project in Vercel.
-2. Go to **Settings → Environment Variables**.
-3. Add `TELEGRAM_BOT_TOKEN`.
-4. Add `TELEGRAM_CHAT_ID`.
-5. Redeploy the project.
-
 ## Deploy to Vercel
 
 ### Option 1: Vercel Dashboard
@@ -79,8 +57,7 @@ For production on Vercel:
    - **Framework Preset:** Vite
    - **Build Command:** `npm run build`
    - **Output Directory:** `dist`
-4. Add the Telegram environment variables if notifications are needed.
-5. Click **Deploy**.
+4. Click **Deploy**.
 
 ### Option 2: Vercel CLI
 
@@ -94,8 +71,6 @@ vercel --prod
 
 ```text
 .
-├── api
-│   └── notify.js
 ├── index.html
 ├── package.json
 ├── postcss.config.js
@@ -111,5 +86,4 @@ vercel --prod
 
 - Edit the phrase sequence in `src/App.jsx` via the `phrases` array.
 - Edit the final confession body in `src/App.jsx` via the `finalLines` array.
-- Adjust the final button-click message in `src/App.jsx` inside `FinalCard`.
 - Adjust typography, colors, and shadows in `tailwind.config.js` and `src/index.css`.
